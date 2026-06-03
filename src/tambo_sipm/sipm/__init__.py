@@ -26,6 +26,13 @@ from tambo_sipm.sipm.noise import (
     sample_dcr_times,
     sample_gain_amplitudes,
 )
+from tambo_sipm.sipm.response import (
+    SiPMResponseResult,
+    sample_photoelectron_arrival_times,
+    simulate_sipm_response,
+    validate_photoelectron_count,
+    validate_response_times,
+)
 
 __all__ = [
     "MICROFC_60035_C_SERIES_MICROCELLS",
@@ -48,4 +55,9 @@ __all__ = [
     "sample_crosstalk_multiplicity",
     "sample_dcr_times",
     "sample_gain_amplitudes",
+    "SiPMResponseResult",
+    "sample_photoelectron_arrival_times",
+    "simulate_sipm_response",
+    "validate_photoelectron_count",
+    "validate_response_times",
 ]
