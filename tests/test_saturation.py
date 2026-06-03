@@ -190,4 +190,4 @@ def test_estimate_photoelectrons_from_fired_microcells_rejects_too_many_fired_ce
         estimate_photoelectrons_from_fired_microcells(
             fired_microcells=fired_microcells,
             n_microcells=100,
-        )
+        ) 

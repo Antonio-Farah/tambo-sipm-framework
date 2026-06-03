@@ -16,6 +16,16 @@ from tambo_sipm.sipm.saturation import (
     validate_microcell_count,
     validate_non_negative_integer_counts,
 )
+from tambo_sipm.sipm.noise import (
+    NoisePulses,
+    afterpulse_amplitude_factor,
+    apply_crosstalk_to_amplitudes,
+    generate_afterpulses,
+    generate_dark_noise,
+    sample_crosstalk_multiplicity,
+    sample_dcr_times,
+    sample_gain_amplitudes,
+)
 
 __all__ = [
     "MICROFC_60035_C_SERIES_MICROCELLS",
@@ -30,4 +40,12 @@ __all__ = [
     "sum_pulses",
     "validate_microcell_count",
     "validate_non_negative_integer_counts",
+    "NoisePulses",
+    "afterpulse_amplitude_factor",
+    "apply_crosstalk_to_amplitudes",
+    "generate_afterpulses",
+    "generate_dark_noise",
+    "sample_crosstalk_multiplicity",
+    "sample_dcr_times",
+    "sample_gain_amplitudes",
 ]
