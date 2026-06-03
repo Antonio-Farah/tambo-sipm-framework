@@ -1,0 +1,36 @@
+name: "onsemi MicroFC-60035-SMT C-Series"
+source: "onsemi MICROC-SERIES/D datasheet"
+
+active_area_mm2: 36.0
+n_microcells: 18980
+microcell_pitch_um: 35
+fill_factor: 0.64
+
+peak_wavelength_nm: 420
+
+pde:
+  vbr_plus_2p5: 0.31
+  vbr_plus_5p0: 0.41
+
+gain:
+  vbr_plus_2p5: 3.0e6
+
+dark_count_rate_hz:
+  typical: 1.2e6
+  maximum: 3.4e6
+  condition: "6 mm, 35 um, Vbr + 2.5 V"
+
+crosstalk_prob:
+  vbr_plus_2p5: 0.07
+
+afterpulsing_prob:
+  vbr_plus_2p5: 0.002
+
+rise_time_fast_output_ns: 1.0
+fast_output_fwhm_ns: 3.2
+microcell_recharge_time_ns: 95.0
+
+default_pulse_model:
+  tau_r_ns: 2.0
+  tau_f_ns: 95.0
+  gain_sigma_pe: 0.1

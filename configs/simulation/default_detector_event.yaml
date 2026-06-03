@@ -1,0 +1,30 @@
+name: "Default TAMBO detector event simulation"
+
+photon_transport:
+  transport_efficiency: 0.2
+  pde: 0.41
+
+sipm_response:
+  window_ns: 1000.0
+  dt_ns: 0.5
+  tau_r_ns: 2.0
+  tau_f_ns: 95.0
+  event_time_ns: 10.0
+  arrival_spread_ns: 2.0
+  gain_mean_pe: 1.0
+  gain_sigma_pe: 0.1
+  crosstalk_prob: 0.07
+  include_dark_noise: false
+  dcr_hz: 1.2e6
+  afterpulse_prob: 0.002
+  tau_afterpulse_ns: 30.0
+  tau_recovery_ns: 95.0
+
+voltage_conversion:
+  voltage_scale_mV_per_pe: 0.12
+
+readout:
+  sampling_interval_ns: 8.0
+  adc_bits: 14
+  v_min_mV: -1000.0
+  v_max_mV: 1000.0

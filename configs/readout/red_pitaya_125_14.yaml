@@ -1,0 +1,18 @@
+name: "Red Pitaya STEMlab 125-14"
+source: "TAMBO-4DAQ documentation"
+
+adc_bits: 14
+sampling_rate_hz: 125.0e6
+sampling_interval_ns: 8.0
+
+adc_input_range_mV:
+  min: -1000.0
+  max: 1000.0
+
+adc_lsb_mV: 0.1220703125
+
+pretrigger_samples: 3
+
+trigger:
+  rising_threshold_mV: null
+  falling_threshold_mV: null
