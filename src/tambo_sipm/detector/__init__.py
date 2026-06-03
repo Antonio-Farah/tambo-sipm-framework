@@ -4,6 +4,7 @@ from tambo_sipm.detector.event import (
     DetectorEventResult,
     convert_pe_to_mV,
     simulate_detector_event,
+    simulate_detector_event_from_config,
     validate_generated_photons,
     validate_voltage_scale,
 )
@@ -34,4 +35,5 @@ __all__ = [
     "validate_photon_counts",
     "validate_probability",
     "validate_voltage_scale",
+    "simulate_detector_event_from_config",
 ]

@@ -13,6 +13,7 @@ Conventions:
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -197,4 +198,95 @@ def simulate_detector_event(
         adc_code=adc_code,
         digitized_voltage_mV=digitized_voltage_mV,
         voltage_scale_mV_per_pe=voltage_scale_mV_per_pe,
+    )
+
+def _get_config_section(config: dict[str, Any], section_name: str) -> dict[str, Any]:
+    """Get a required configuration section.
+
+    Args:
+        config: Full configuration dictionary.
+        section_name: Required section name.
+
+    Returns:
+        Configuration section.
+
+    Raises:
+        KeyError: If the section is missing.
+        ValueError: If the section is not a dictionary.
+    """
+    if section_name not in config:
+        raise KeyError(f"Missing required configuration section: {section_name}")
+
+    section = config[section_name]
+
+    if not isinstance(section, dict):
+        raise ValueError(f"Configuration section must be a dictionary: {section_name}")
+
+    return section
+
+
+def simulate_detector_event_from_config(
+    generated_photons: int,
+    config: dict[str, Any],
+    rng: np.random.Generator | None = None,
+) -> DetectorEventResult:
+    """Simulate a detector event using a configuration dictionary.
+
+    The expected configuration structure is the one used in:
+
+        configs/simulation/default_detector_event.yaml
+
+    Args:
+        generated_photons: Number of scintillation photons generated in the bar.
+        config: Detector-event simulation configuration dictionary.
+        rng: Optional NumPy random generator.
+
+    Returns:
+        DetectorEventResult containing the complete simulated event.
+    """
+    photon_transport_config = _get_config_section(config, "photon_transport")
+    sipm_response_config = _get_config_section(config, "sipm_response")
+    voltage_conversion_config = _get_config_section(config, "voltage_conversion")
+    readout_config = _get_config_section(config, "readout")
+
+    return simulate_detector_event(
+        generated_photons=generated_photons,
+        transport_efficiency=float(
+            photon_transport_config["transport_efficiency"]
+        ),
+        pde=float(photon_transport_config["pde"]),
+        voltage_scale_mV_per_pe=float(
+            voltage_conversion_config["voltage_scale_mV_per_pe"]
+        ),
+        window_ns=float(sipm_response_config["window_ns"]),
+        dt_ns=float(sipm_response_config["dt_ns"]),
+        tau_r_ns=float(sipm_response_config["tau_r_ns"]),
+        tau_f_ns=float(sipm_response_config["tau_f_ns"]),
+        event_time_ns=float(sipm_response_config.get("event_time_ns", 0.0)),
+        arrival_spread_ns=float(
+            sipm_response_config.get("arrival_spread_ns", 0.0)
+        ),
+        sampling_interval_ns=float(readout_config["sampling_interval_ns"]),
+        adc_bits=int(readout_config["adc_bits"]),
+        v_min_mV=float(readout_config["v_min_mV"]),
+        v_max_mV=float(readout_config["v_max_mV"]),
+        gain_mean_pe=float(sipm_response_config.get("gain_mean_pe", 1.0)),
+        gain_sigma_pe=float(sipm_response_config.get("gain_sigma_pe", 0.1)),
+        crosstalk_prob=float(
+            sipm_response_config.get("crosstalk_prob", 0.0)
+        ),
+        include_dark_noise=bool(
+            sipm_response_config.get("include_dark_noise", False)
+        ),
+        dcr_hz=float(sipm_response_config.get("dcr_hz", 0.0)),
+        afterpulse_prob=float(
+            sipm_response_config.get("afterpulse_prob", 0.0)
+        ),
+        tau_afterpulse_ns=float(
+            sipm_response_config.get("tau_afterpulse_ns", 30.0)
+        ),
+        tau_recovery_ns=float(
+            sipm_response_config.get("tau_recovery_ns", 95.0)
+        ),
+        rng=rng,
     )
