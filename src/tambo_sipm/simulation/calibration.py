@@ -19,6 +19,10 @@ for:
     - rms_mV
     - integral_mVns
     - width_ns
+
+The valid-event fraction is reported as a diagnostic, but it is not included
+in the main score. This avoids mixing calibration with trigger/selection
+efficiency effects.
 """
 
 from __future__ import annotations
@@ -77,6 +81,7 @@ def set_nested_config_value(
     for key in path[:-1]:
         if key not in current:
             raise KeyError(f"Missing configuration section: {key}")
+
         if not isinstance(current[key], dict):
             raise ValueError(f"Configuration section is not a dictionary: {key}")
 
@@ -154,7 +159,9 @@ def validate_calibration_grid_values(
         raise ValueError("tau_f_values_ns must contain positive values.")
 
     if any(value < 0.0 for value in arrival_spread_values_ns):
-        raise ValueError("arrival_spread_values_ns must contain non-negative values.")
+        raise ValueError(
+            "arrival_spread_values_ns must contain non-negative values."
+        )
 
 
 def feature_error_from_distribution_table(
@@ -162,7 +169,7 @@ def feature_error_from_distribution_table(
     feature: str,
     metric_column: str = "mean_relative_difference",
 ) -> float:
-    """Extract an absolute feature error from a distribution-comparison table.
+    """Extract an absolute feature error from a comparison table.
 
     Args:
         distribution_comparison: Output of compare_feature_distributions.
@@ -205,7 +212,7 @@ def calibration_score_from_distribution_table(
         metric_column: Metric used to define each feature error.
 
     Returns:
-        Dictionary containing per-feature errors and total score.
+        Dictionary containing per-feature errors and total feature score.
     """
     if feature_columns is None:
         feature_columns = DEFAULT_CALIBRATION_FEATURES
@@ -230,9 +237,10 @@ def calibration_score_from_distribution_table(
         weighted_errors.append(weight * error)
         weights.append(weight)
 
-    score = float(np.sum(weighted_errors) / np.sum(weights))
+    feature_score = float(np.sum(weighted_errors) / np.sum(weights))
 
-    errors["score"] = score
+    errors["feature_score"] = feature_score
+    errors["score"] = feature_score
 
     return errors
 
@@ -274,6 +282,19 @@ def calibration_grid_rows(
         )
 
     return rows
+
+
+def _extract_valid_fraction(
+    validity_summary: pd.DataFrame,
+    dataset: str,
+) -> float:
+    """Extract valid fraction for one dataset from a validity summary."""
+    dataset_rows = validity_summary[validity_summary["dataset"] == dataset]
+
+    if dataset_rows.empty:
+        raise ValueError(f"Dataset not found in validity summary: {dataset}")
+
+    return float(dataset_rows["valid_fraction"].iloc[0])
 
 
 def run_single_calibration_point(
@@ -341,17 +362,23 @@ def run_single_calibration_point(
         feature_weights=feature_weights,
     )
 
-    simulated_validity = comparison.validity_summary[
-        comparison.validity_summary["dataset"] == "simulated"
-    ]
-
-    simulated_valid_fraction = float(simulated_validity["valid_fraction"].iloc[0])
+    real_valid_fraction = _extract_valid_fraction(
+        validity_summary=comparison.validity_summary,
+        dataset="real",
+    )
+    simulated_valid_fraction = _extract_valid_fraction(
+        validity_summary=comparison.validity_summary,
+        dataset="simulated",
+    )
+    validity_fraction_error = abs(real_valid_fraction - simulated_valid_fraction)
 
     row: dict[str, Any] = {
         "transport_efficiency": float(transport_efficiency),
         "tau_f_ns": float(tau_f_ns),
         "arrival_spread_ns": float(arrival_spread_ns),
+        "real_valid_fraction": real_valid_fraction,
         "simulated_valid_fraction": simulated_valid_fraction,
+        "validity_fraction_error": float(validity_fraction_error),
         "n_simulated_events": int(len(simulated_features)),
     }
 
@@ -391,7 +418,7 @@ def run_calibration_grid(
         feature_weights: Feature weights for scoring.
 
     Returns:
-        Calibration results sorted by increasing score.
+        Calibration results sorted by increasing feature score.
     """
     grid = calibration_grid_rows(
         transport_efficiencies=transport_efficiencies,

@@ -56,15 +56,30 @@ def make_features(scale: float = 1.0) -> pd.DataFrame:
             "event_id": ["a", "b", "c", "d"],
             "valid": [True, True, True, True],
             "extraction_status": ["ok", "ok", "ok", "ok"],
-            "peak_mV": [10.0 * scale, 20.0 * scale, 30.0 * scale, 40.0 * scale],
-            "rms_mV": [5.0 * scale, 10.0 * scale, 15.0 * scale, 20.0 * scale],
+            "peak_mV": [
+                10.0 * scale,
+                20.0 * scale,
+                30.0 * scale,
+                40.0 * scale,
+            ],
+            "rms_mV": [
+                5.0 * scale,
+                10.0 * scale,
+                15.0 * scale,
+                20.0 * scale,
+            ],
             "integral_mVns": [
                 100.0 * scale,
                 200.0 * scale,
                 300.0 * scale,
                 400.0 * scale,
             ],
-            "width_ns": [20.0 * scale, 40.0 * scale, 60.0 * scale, 80.0 * scale],
+            "width_ns": [
+                20.0 * scale,
+                40.0 * scale,
+                60.0 * scale,
+                80.0 * scale,
+            ],
         }
     )
 
@@ -183,6 +198,7 @@ def test_calibration_score_from_distribution_table():
     assert np.isclose(score["rms_mV_error"], 0.2)
     assert np.isclose(score["integral_mVns_error"], 0.3)
     assert np.isclose(score["width_ns_error"], 0.4)
+    assert np.isclose(score["feature_score"], 0.25)
     assert np.isclose(score["score"], 0.25)
 
 
@@ -208,8 +224,12 @@ def test_run_single_calibration_point():
     assert result["tau_f_ns"] == 95.0
     assert result["arrival_spread_ns"] == 2.0
     assert "score" in result
+    assert "feature_score" in result
     assert "peak_mV_error" in result
     assert "width_ns_error" in result
+    assert "real_valid_fraction" in result
+    assert "simulated_valid_fraction" in result
+    assert "validity_fraction_error" in result
 
 
 def test_run_calibration_grid():
@@ -232,4 +252,8 @@ def test_run_calibration_grid():
 
     assert len(results) == 2
     assert "score" in results.columns
+    assert "feature_score" in results.columns
+    assert "validity_fraction_error" in results.columns
+    assert "real_valid_fraction" in results.columns
+    assert "simulated_valid_fraction" in results.columns
     assert results["score"].is_monotonic_increasing
