@@ -32,6 +32,12 @@ from tambo_sipm.analysis.metrics import (
     validate_1d_numeric_array,
     validate_xy_arrays,
 )
+from tambo_sipm.analysis.feature_tables import (
+    extract_features_from_pulse_table,
+    extract_features_from_waveform_dict,
+    extract_waveform_feature_row,
+    summarize_feature_table,
+)
 
 __all__ = [
     "CorrelationComparison",
@@ -62,4 +68,8 @@ __all__ = [
     "validate_waveform_inputs",
     "validate_xy_arrays",
     "waveform_rms",
+    "extract_features_from_pulse_table",
+    "extract_features_from_waveform_dict",
+    "extract_waveform_feature_row",
+    "summarize_feature_table",
 ]
