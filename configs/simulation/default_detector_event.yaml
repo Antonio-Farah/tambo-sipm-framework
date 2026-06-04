@@ -1,7 +1,7 @@
 name: "Default TAMBO detector event simulation"
 
 photon_transport:
-  transport_efficiency: 0.2
+  transport_efficiency: 0.05
   pde: 0.41
 
 sipm_response:

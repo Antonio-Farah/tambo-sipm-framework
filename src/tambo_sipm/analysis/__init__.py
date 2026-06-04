@@ -47,6 +47,16 @@ from tambo_sipm.analysis.comparison import (
     save_feature_comparison_result,
     summarize_validity,
 )
+from tambo_sipm.analysis.matching import (
+    DEFAULT_MATCHING_FEATURES,
+    MatchedFeatureResult,
+    filter_matchable_features,
+    match_simulated_to_real_features,
+    reference_center_and_scale,
+    save_matched_feature_result,
+    standardized_feature_matrix,
+    weighted_euclidean_distances,
+)
 
 __all__ = [
     "CorrelationComparison",
@@ -88,4 +98,12 @@ __all__ = [
     "filter_comparable_features",
     "save_feature_comparison_result",
     "summarize_validity",
+    "DEFAULT_MATCHING_FEATURES",
+    "MatchedFeatureResult",
+    "filter_matchable_features",
+    "match_simulated_to_real_features",
+    "reference_center_and_scale",
+    "save_matched_feature_result",
+    "standardized_feature_matrix",
+    "weighted_euclidean_distances",
 ]
