@@ -189,6 +189,9 @@ def add_particle_metadata(
 ) -> pd.DataFrame:
     """Add standardized particle metadata columns.
 
+    This function works with both the original Romero table and the
+    standardized photon-event table.
+
     Args:
         dataframe: Input photon table.
         particle_id_column: Column containing the CORSIKA particle ID.
@@ -201,6 +204,8 @@ def add_particle_metadata(
 
     if particle_id_column in result.columns:
         particle_ids = pd.to_numeric(result[particle_id_column], errors="coerce")
+    elif "particle_id" in result.columns:
+        particle_ids = pd.to_numeric(result["particle_id"], errors="coerce")
     else:
         particle_ids = pd.Series([pd.NA] * len(result), index=result.index)
 
@@ -208,14 +213,21 @@ def add_particle_metadata(
 
     if particle_name_column in result.columns:
         result["particle_name_original"] = result[particle_name_column].astype(str)
+    elif "particle_name_original" in result.columns:
+        result["particle_name_original"] = result["particle_name_original"].astype(str)
 
     mapped_names = result["particle_id"].map(particle_name_from_corsika_id)
     result["particle_name"] = mapped_names.astype(str)
 
-    if particle_name_column in result.columns:
+    if "particle_name_original" in result.columns:
         result["particle_name"] = result["particle_name"].where(
             result["particle_name"] != "unknown",
             result["particle_name_original"],
+        )
+    elif "particle_name" in dataframe.columns:
+        result["particle_name"] = result["particle_name"].where(
+            result["particle_name"] != "unknown",
+            dataframe["particle_name"].astype(str),
         )
 
     result["particle_category"] = result["particle_id"].map(

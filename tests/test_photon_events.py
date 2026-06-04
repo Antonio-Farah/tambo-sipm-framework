@@ -126,6 +126,22 @@ def test_particle_summary_accepts_standardized_events():
     assert "rows" in summary.columns
     assert summary["rows"].sum() == 3
 
+def test_particle_summary_preserves_standardized_particle_metadata():
+    dataframe = make_test_dataframe()
+
+    events = build_row_level_photon_events(
+        dataframe=dataframe,
+        detector=0,
+    )
+
+    summary = particle_summary(events)
+
+    assert set(summary["particle_name"]) == {"gamma", "e-", "mu+"}
+    assert set(summary["particle_category"]) == {
+        "electromagnetic",
+        "muonic",
+    }
+
 def test_select_detector_with_most_rows():
     dataframe = make_test_dataframe()
 
