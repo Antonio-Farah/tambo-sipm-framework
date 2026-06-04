@@ -38,6 +38,15 @@ from tambo_sipm.analysis.feature_tables import (
     extract_waveform_feature_row,
     summarize_feature_table,
 )
+from tambo_sipm.analysis.comparison import (
+    DEFAULT_FEATURE_COLUMNS,
+    DEFAULT_RELATIONSHIPS,
+    FeatureComparisonResult,
+    compare_real_sim_features,
+    filter_comparable_features,
+    save_feature_comparison_result,
+    summarize_validity,
+)
 
 __all__ = [
     "CorrelationComparison",
@@ -72,4 +81,11 @@ __all__ = [
     "extract_features_from_waveform_dict",
     "extract_waveform_feature_row",
     "summarize_feature_table",
+    "DEFAULT_FEATURE_COLUMNS",
+    "DEFAULT_RELATIONSHIPS",
+    "FeatureComparisonResult",
+    "compare_real_sim_features",
+    "filter_comparable_features",
+    "save_feature_comparison_result",
+    "summarize_validity",
 ]
